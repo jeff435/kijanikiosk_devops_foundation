@@ -1,0 +1,52 @@
+==========================================
+KijaniKiosk Provisioning Script Starting
+==========================================
+
+=== PHASE 1: Creating Service Accounts ===
+✓ kijanikiosk group already exists
+✓ kk-api already exists
+✓ kk-payments already exists
+✓ kk-logs already exists
+
+=== PHASE 2: Creating Directories ===
+✓ Created /opt/kijanikiosk structure
+✓ Set ownership and permissions
+
+=== PHASE 3: Setting ACLs ===
+✓ ACLs configured
+
+=== PHASE 4: Creating Environment Files ===
+chmod: cannot access '/opt/kijanikiosk/config/*.env': No such file or directory
+✓ Environment files created
+
+=== PHASE 5: Creating systemd Services ===
+✓ Service files created
+
+=== PHASE 6: Configuring Firewall ===
+Backing up 'user.rules' to '/etc/ufw/user.rules.20260328_074540'
+Backing up 'before.rules' to '/etc/ufw/before.rules.20260328_074540'
+Backing up 'after.rules' to '/etc/ufw/after.rules.20260328_074540'
+Backing up 'user6.rules' to '/etc/ufw/user6.rules.20260328_074540'
+Backing up 'before6.rules' to '/etc/ufw/before6.rules.20260328_074540'
+Backing up 'after6.rules' to '/etc/ufw/after6.rules.20260328_074540'
+
+Default incoming policy changed to 'deny'
+(be sure to update your rules accordingly)
+Default outgoing policy changed to 'allow'
+(be sure to update your rules accordingly)
+Rules updated
+Rules updated (v6)
+Rules updated
+Rules updated (v6)
+Firewall is active and enabled on system startup
+✓ Firewall configured
+
+=== PHASE 7: Configuring Log Rotation ===
+✓ Logrotate configured
+
+=== PHASE 8: Health Check ===
+✓ Health check created
+
+==========================================
+Provisioning Complete!
+==========================================

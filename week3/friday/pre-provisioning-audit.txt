@@ -1,0 +1,14 @@
+=== PRE-PROVISIONING AUDIT ===
+Date: Sat 28 Mar 2026 07:31:00 AM EDT
+
+=== Service Accounts ===
+
+=== Group ===
+
+=== /opt/kijanikiosk ===
+ls: cannot access '/opt/kijanikiosk/': No such file or directory
+
+=== UFW Rules ===
+Status: inactive
+
+=== Package Holds ===
