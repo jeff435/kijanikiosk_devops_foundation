@@ -1,0 +1,14 @@
+[Unit]
+Description=KijaniKiosk API Service
+After=network.target
+
+[Service]
+Type=simple
+User=kk-api
+Group=kijanikiosk
+EnvironmentFile=/opt/kijanikiosk/config/api.env
+ExecStart=/bin/sleep infinity
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

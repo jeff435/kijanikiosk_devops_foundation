@@ -1,0 +1,13 @@
+[Unit]
+Description=KijaniKiosk Log Service
+After=network.target
+
+[Service]
+Type=simple
+User=kk-logs
+Group=kijanikiosk
+ExecStart=/bin/sleep infinity
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

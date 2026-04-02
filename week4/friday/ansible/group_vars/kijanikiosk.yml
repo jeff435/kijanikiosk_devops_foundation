@@ -1,0 +1,7 @@
+ansible_user: ubuntu
+kijanikiosk_group: kijanikiosk
+kijanikiosk_base_dir: /opt/kijanikiosk
+api_port: 3000
+payments_port: 3001
+# The SSH key path will be injected or assumed from the environment
+# ansible_ssh_private_key_file: "~/.ssh/{{ key_name }}.pem"
