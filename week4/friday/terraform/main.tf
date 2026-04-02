@@ -57,6 +57,7 @@ module "app_server" {
 
   for_each = local.servers
 
+  name                   = each.value
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.kijanikiosk_sg.id]
