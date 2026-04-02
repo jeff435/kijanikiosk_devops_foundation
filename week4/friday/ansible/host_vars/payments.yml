@@ -1,0 +1,4 @@
+service_name: kk-payments
+service_user: kk-payments
+env_files:
+  - { src: 'payments-api.env.j2', dest: 'payments-api.env' }

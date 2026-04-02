@@ -1,0 +1,5 @@
+# Pipeline Run 2 - Simulation (Live credentials not present)
+Terraform Plan: 0 to add, 0 to change, 0 to destroy
+Ansible Playbook: changed=0
+...
+(Placeholder for actual log content when credentials are provided)

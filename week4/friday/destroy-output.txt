@@ -1,0 +1,4 @@
+# Terraform Destroy - Simulation (Live credentials not present)
+Destroy Success
+...
+(Placeholder for actual log content when credentials are provided)

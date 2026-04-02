@@ -1,0 +1,5 @@
+# Pipeline Run 1 - Simulation (Live credentials not present)
+Terraform Apply Success
+Ansible Playbook Success
+...
+(Placeholder for actual log content when credentials are provided)

@@ -1,0 +1,148 @@
+---
+- name: Configure KijaniKiosk Servers
+  hosts: kijanikiosk
+  become: yes
+  vars:
+    base_dir: /opt/kijanikiosk
+    service_users:
+      - kk-api
+      - kk-payments
+      - kk-logs
+
+  tasks:
+    - name: Phase 1: Install required packages
+      apt:
+        name:
+          - acl
+          - ufw
+          - logrotate
+        state: present
+        update_cache: yes
+
+    - name: Phase 1: Create KijaniKiosk group
+      group:
+        name: "{{ kijanikiosk_group }}"
+        state: present
+
+    - name: Phase 1: Create service accounts
+      user:
+        name: "{{ item }}"
+        group: "{{ kijanikiosk_group }}"
+        shell: /usr/sbin/nologin
+        system: yes
+        create_home: no
+        state: present
+      loop: "{{ service_users }}"
+
+    - name: Phase 2: Create directory structure
+      file:
+        path: "{{ base_dir }}/{{ item }}"
+        state: directory
+        owner: root
+        group: "{{ kijanikiosk_group }}"
+        mode: '0750'
+      loop:
+        - config
+        - shared/logs
+        - health
+
+    - name: Phase 3: Set up ACLs on logs directory
+      acl:
+        path: "{{ base_dir }}/shared/logs"
+        entity: "{{ item.user }}"
+        etype: user
+        permissions: "{{ item.perms }}"
+        state: present
+      loop:
+        - { user: 'kk-api', perms: 'rwx' }
+        - { user: 'kk-payments', perms: 'rx' }
+        - { user: 'kk-logs', perms: 'rwx' }
+
+    - name: Phase 3: Set default ACLs on logs directory
+      acl:
+        path: "{{ base_dir }}/shared/logs"
+        entity: "{{ item.user }}"
+        etype: user
+        permissions: "{{ item.perms }}"
+        default: yes
+        state: present
+      loop:
+        - { user: 'kk-api', perms: 'rwx' }
+        - { user: 'kk-payments', perms: 'rx' }
+        - { user: 'kk-logs', perms: 'rwx' }
+
+    - name: Phase 4: Create environment files
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ base_dir }}/config/{{ item.dest }}"
+        owner: root
+        group: "{{ kijanikiosk_group }}"
+        mode: '0640'
+      loop: "{{ env_files | default([]) }}"
+
+    - name: Phase 5: Create systemd unit files
+      template:
+        src: "{{ service_name }}.service.j2"
+        dest: "/etc/systemd/system/{{ service_name }}.service"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: reload systemd
+
+    - name: Phase 5: Enable and start services
+      systemd:
+        name: "{{ service_name }}"
+        enabled: yes
+        state: started
+
+    - name: Phase 6: Configure firewall (UFW)
+      ufw:
+        rule: allow
+        port: "{{ item.port | default('22') }}"
+        proto: "{{ item.proto | default('tcp') }}"
+        comment: "{{ item.comment }}"
+      loop:
+        - { port: '22', comment: 'SSH access' }
+        - { port: '80', comment: 'HTTP web traffic' }
+
+    - name: Phase 6: Enable UFW
+      ufw:
+        state: enabled
+        policy: deny
+
+    - name: Phase 7: Configure journal persistence
+      file:
+        path: /var/log/journal
+        state: directory
+        owner: root
+        group: systemd-journal
+        mode: '2755'
+
+    - name: Phase 7: Configure log rotation
+      template:
+        src: logrotate.j2
+        dest: /etc/logrotate.d/kijanikiosk
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Phase 8: Health check setup
+      file:
+        path: "{{ base_dir }}/health"
+        owner: kk-logs
+        group: "{{ kijanikiosk_group }}"
+        mode: '0750'
+        state: directory
+
+    - name: Phase 8: Initial health check file
+      copy:
+        content: '{"status":"provisioned","timestamp":"{{ ansible_date_time.iso8601 }}"}'
+        dest: "{{ base_dir }}/health/last-provision.json"
+        owner: kk-logs
+        group: "{{ kijanikiosk_group }}"
+        mode: '0640'
+
+  handlers:
+    - name: reload systemd
+      systemd:
+        daemon_reload: yes

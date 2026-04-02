@@ -1,0 +1,38 @@
+[Unit]
+Description=KijaniKiosk Payments Service
+After=kk-api.service
+Wants=kk-api.service
+
+[Service]
+Type=simple
+User=kk-payments
+Group=kijanikiosk
+EnvironmentFile=/opt/kijanikiosk/config/payments-api.env
+ExecStart=/bin/sleep infinity
+Restart=always
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectClock=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RemoveIPC=yes
+RestrictNamespaces=yes
+SystemCallFilter=~@privileged @resources
+CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_NET_ADMIN CAP_DAC_OVERRIDE CAP_SYS_PTRACE CAP_SYS_MODULE
+PrivateDevices=yes
+PrivateUsers=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_UNIX AF_INET
+IPAddressDeny=any
+IPAddressAllow=127.0.0.1
+
+[Install]
+WantedBy=multi-user.target
