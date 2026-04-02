@@ -1,0 +1,4 @@
+service_name: kk-api
+service_user: kk-api
+env_files:
+  - { src: 'api.env.j2', dest: 'api.env' }
