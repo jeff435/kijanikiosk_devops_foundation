@@ -1,18 +1,12 @@
-# Week 5 Monday: CI Pipeline Reflection
+# Week 5 Monday: CI Pipeline Foundation Reflection
 
 ## Question 1: What Today's Pipeline Does Not Do
 
 Today's pipeline only checks if Node.js runtime is available. The three missing CI properties are:
 
 1. **Automated Build** - Add `stage('Build') { sh 'npm run build' }` to Jenkinsfile
-2. **Automated Testing** - Add `stage('Test') { sh 'npm test' }` to Jenkinsfile  
+2. **Automated Testing** - Add `stage('Test') { sh 'npm test' }` to Jenkinsfile
 3. **Artifact Production** - Add `stage('Package') { archiveArtifacts artifacts: 'dist/**/*' }` to Jenkinsfile
-
-Today's pipeline does NOT verify:
-- The application compiles without errors
-- Unit tests pass
-- Dependencies are correct
-- The artifact is deployable
 
 ## Question 2: The Broken-Build Contract in Practice
 
@@ -42,11 +36,3 @@ The rule: Pipeline is code. Code lives in version control.
 **When polling is better:** When Jenkins is behind a firewall that blocks inbound webhooks.
 
 **Polling interval trade-off:** For 20 developers pushing multiple times daily, polling every 2 minutes creates 600 API calls per hour. Webhooks are better for teams larger than 5 developers.
-
-## Looking Ahead
-
-- `npm run build` produces a `dist/` folder with bundled JavaScript
-- Jenkins uses `archiveArtifacts artifacts: 'dist/**/*'` to find build output
-- Jenkins sees test failures only after all tests complete unless `--bail` flag is used
-Eof
-EEOF
