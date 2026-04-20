@@ -1,0 +1,13 @@
+{
+  "name": "kijanikiosk-payments",
+  "version": "1.0.0",
+  "description": "KijaniKiosk payments service CI pipeline",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "mkdir -p dist && echo 'console.log(\"KijaniKiosk Payments v1.0.0\");' > dist/main.js",
+    "test": "echo 'Running tests...' && exit 0",
+    "lint": "echo 'Running lint...' && exit 0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
