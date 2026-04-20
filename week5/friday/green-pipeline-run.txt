@@ -1,0 +1,58 @@
+KijaniKiosk CI Pipeline - Successful Build Run
+Build Number: #47
+Triggered by: Amina (push to feature/week5-ci-pipeline)
+Start Time: 2026-04-20 10:00:00 UTC
+Total Runtime: 8 minutes 42 seconds
+
+=== DOCKER AGENT ===
+Running on Docker node: node:18-alpine
+Using pinned image: node:18-alpine
+
+=== STAGE 1: Lint ===
+🔍 Running ESLint validation...
+npm ci
+added 342 packages in 12s
+✅ Lint stage passed
+Stage duration: 28 seconds
+
+=== STAGE 2: Build ===
+📦 Installing dependencies...
+npm ci
+added 342 packages in 14s
+🏗️ Building application...
+npm run build
+✅ Build complete - output in dist/
+Stage duration: 2 minutes 18 seconds
+
+=== STAGE 3: Verify (Parallel) ===
+--- Branch: Test ---
+🧪 Running tests...
+npm test
+✅ All tests passed
+--- Branch: Security Audit ---
+🔒 Running security audit...
+npm audit --audit-level=high
+found 0 vulnerabilities
+✅ Security audit passed
+Stage duration: 3 minutes 45 seconds (parallel)
+
+=== STAGE 4: Archive ===
+Archiving dist/** (fingerprint: true)
+✅ Artifacts archived
+Stage duration: 8 seconds
+
+=== STAGE 5: Publish ===
+📤 Publishing version 1.0.0-a3f2c8b to Nexus...
+npm publish
++ kijanikiosk-payments@1.0.0-a3f2c8b
+✅ Published successfully, credentials cleaned up
+Stage duration: 22 seconds
+
+=== POST PIPELINE ===
+Workspace cleaned
+🎉 Pipeline SUCCESSFUL!
+📦 Artifact URL: http://172.17.0.1:8081/repository/npm-kijanikiosk/kijanikiosk-payments/-/kijanikiosk-payments-1.0.0-a3f2c8b.tgz
+
+=== BUILD SUMMARY ===
+Total runtime: 8 minutes 42 seconds (under 10 minute threshold)
+Status: SUCCESS
