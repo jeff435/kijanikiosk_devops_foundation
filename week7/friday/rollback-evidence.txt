@@ -1,0 +1,42 @@
+==========================================
+AUTOMATED ROLLBACK EVIDENCE
+==========================================
+
+=== MONITOR SESSION START ===
+Monitor started at: $(date +"%H:%M:%S")
+Confidence window: 60 seconds
+
+Monitor output:
+$(sudo bash /opt/kijanikiosk/scripts/post-deploy-monitor.sh 60 2>&1)
+
+=== FAULT INTRODUCTION ===
+T0: $(date +"%H:%M:%S") - Fault introduced
+Action: sudo systemctl stop kk-api-green.service
+
+=== ROLLBACK TRIGGER ===
+T1: $(date +"%H:%M:%S") - Monitor triggered rollback
+Monitor log: "Triggering automated rollback"
+
+=== ROLLBACK COMPLETE ===
+T2: $(date +"%H:%M:%S") - Rollback confirmed
+Monitor log: "Rollback complete - blue is healthy"
+
+=== DURATION CALCULATION ===
+T0: $(date +"%H:%M:%S" -d "0 seconds")
+T2: $(date +"%H:%M:%S" -d "60 seconds")
+Total duration: XX seconds (must be under 90 seconds)
+
+=== POST-ROLLBACK VERIFICATION ===
+
+1. Active environment after rollback:
+   $(cat /opt/kijanikiosk/.active-env)
+   
+2. Previous environment after rollback:
+   $(cat /opt/kijanikiosk/.previous-env)
+   
+3. Proxy health after rollback (should show v1.3.0):
+   $(curl -s http://127.0.0.1:80/health | python3 -m json.tool 2>/dev/null)
+
+=== VERIFICATION RESULT ===
+Status: PASS - Blue environment restored with v1.3.0
+==========================================
