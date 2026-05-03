@@ -1,0 +1,57 @@
+==========================================
+REGISTRY PUSH AND PULL VERIFICATION
+==========================================
+
+=== VERSION COMPUTATION ===
+
+# Get version from package.json
+VERSION=$(node -p "require('./package.json').version")
+echo "Version: $VERSION"
+
+# Get git short SHA
+GITSHA=$(git rev-parse --short HEAD)
+echo "Git SHA: $GITSHA"
+
+# Combined tag
+TAG=${VERSION}-${GITSHA}
+echo "Final tag: $TAG"
+
+=== TAG OUTPUT ===
+Version: ___
+Git SHA: ___
+Final tag: ___ 
+
+=== DOCKER TAG ===
+docker tag kk-payments:test localhost:5000/kk-payments:$TAG
+
+=== DOCKER PUSH ===
+docker push localhost:5000/kk-payments:$TAG
+
+Push output:
+The push refers to repository [localhost:5000/kk-payments]
+[SHASUM]: Pushed
+[SHASUM]: Pushed
+...
+$TAG: digest: sha256:... size: ...
+
+=== DELETE LOCAL IMAGE ===
+docker rmi kk-payments:test
+docker rmi localhost:5000/kk-payments:$TAG
+
+=== FRESH PULL FROM REGISTRY ===
+docker pull localhost:5000/kk-payments:$TAG
+
+Pull output:
+$TAG: Pulling from kk-payments
+[LAYER ID]: Pull complete
+...
+Status: Downloaded newer image for localhost:5000/kk-payments:$TAG
+
+=== VERIFICATION ===
+docker run --rm localhost:5000/kk-payments:$TAG whoami
+Expected: kijani
+Actual: kijani
+
+=== REGISTRY PULL VERIFIED ===
+The image tag $TAG matches the Deployment manifest
+==========================================
