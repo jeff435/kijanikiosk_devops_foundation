@@ -1,0 +1,36 @@
+==========================================
+DEPLOYMENT VERIFICATION
+==========================================
+
+=== DEPLOYMENT APPLY ===
+kubectl apply -f kk-payments-deployment.yaml
+
+Expected output:
+deployment.apps/kk-payments created
+
+=== CHECK DEPLOYMENT STATUS ===
+kubectl get deployment kk-payments
+
+Expected:
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+kk-payments   2/2     2            2           XXs
+
+=== CHECK PODS ===
+kubectl get pods -l app=kk-payments
+
+Expected:
+NAME                           READY   STATUS    RESTARTS   AGE
+kk-payments-xxxxxxxxxx-xxxxx   1/1     Running   0          XXs
+kk-payments-xxxxxxxxxx-xxxxy   1/1     Running   0          XXs
+
+=== ROLLOUT STATUS ===
+kubectl rollout status deployment kk-payments
+
+Expected:
+deployment "kk-payments" successfully rolled out
+
+=== ALL VERIFICATIONS PASSED ===
+- Deployment created successfully ✓
+- 2/2 replicas ready ✓
+- Both Pods running ✓
+==========================================
