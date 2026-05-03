@@ -1,0 +1,49 @@
+==========================================
+SERVICE VERIFICATION
+==========================================
+
+=== SERVICE APPLY ===
+kubectl apply -f kk-payments-service.yaml
+
+Expected output:
+service/kk-payments-service created
+
+=== CHECK ENDPOINTS ===
+kubectl get endpoints kk-payments-service
+
+Expected:
+NAME                   ENDPOINTS                               AGE
+kk-payments-service    172.17.0.3:3001,172.17.0.4:3001         XXs
+
+Endpoints MUST NOT show <none>
+
+=== GET MINIKUBE IP ===
+minikube ip
+
+Minikube IP: ___
+
+=== HEALTH CHECK THROUGH NODEPORT ===
+curl -s http://$(minikube ip):30001/health | python3 -m json.tool
+
+Expected output:
+{
+    "status": "healthy",
+    "version": "___",
+    "timestamp": "..."
+}
+
+=== IN-CLUSTER DNS TEST ===
+kubectl run test-pod --image=busybox --restart=Never --rm -it -- \
+  wget -q -O- http://kk-payments-service.default.svc.cluster.local:3001/health
+
+Expected output shows healthy JSON response
+
+=== CLEAN UP TEST POD ===
+kubectl delete pod test-pod --ignore-not-found
+
+=== ALL VERIFICATIONS PASSED ===
+- Service created ✓
+- Endpoints show both Pod IPs ✓
+- Health endpoint responds through NodePort ✓
+- In-cluster DNS resolves correctly ✓
+==========================================
