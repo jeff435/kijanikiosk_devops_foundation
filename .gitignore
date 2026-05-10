@@ -12,3 +12,5 @@ inventory.ini
 
 # Logs
 *.log
+minikube-linux-amd64
+*.amd64
