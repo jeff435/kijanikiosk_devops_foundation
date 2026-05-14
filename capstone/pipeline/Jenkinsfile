@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Terraform: Staging Namespace') {
+            steps {
+                dir('capstone/terraform') {
+                    sh 'terraform init'
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+        stage('Ansible: Staging Config') {
+            steps {
+                dir('capstone/ansible') {
+                    sh 'ansible-playbook configure-staging.yml'
+                }
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                sh 'kubectl apply -f capstone/k8s/kk-payments-deployment.yaml -n kijani-staging'
+                sh 'kubectl apply -f capstone/k8s/kk-payments-service.yaml -n kijani-staging'
+            }
+        }
+        stage('Smoke Test') {
+            steps {
+                script {
+                    sh 'sleep 10'
+                    def health = sh(script: 'kubectl exec -n kijani-staging deployment/kk-payments -- curl -s http://localhost:3000/health', returnStdout: true).trim()
+                    if (!health.contains('"status":"ok"')) {
+                        error "Smoke test failed"
+                    }
+                    echo "Smoke test passed"
+                }
+            }
+        }
+        stage('Approval Gate') {
+            input {
+                message "Deploy to production?"
+                submitter "admin"
+                parameters {
+                    string(name: 'REASON', defaultValue: '', description: 'Why approve?')
+                }
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                sh 'kubectl apply -f capstone/k8s/kk-payments-deployment.yaml -n default'
+                sh 'kubectl apply -f capstone/k8s/kk-payments-service.yaml -n default'
+            }
+        }
+    }
+}

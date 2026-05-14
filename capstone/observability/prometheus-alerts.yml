@@ -1,0 +1,17 @@
+groups:
+- name: kk-payments
+  rules:
+  - alert: KkPaymentsHighErrorRate
+    expr: |
+      (
+        sum(rate(http_requests_total{app="kk-payments",status=~"5.."}[5m]))
+        /
+        sum(rate(http_requests_total{app="kk-payments"}[5m]))
+      ) > 0.01
+    for: 2m
+    labels:
+      severity: critical
+      service: kk-payments
+    annotations:
+      summary: "kk-payments error rate exceeds 1%"
+      description: "Error rate is {{ $value | humanizePercentage }} over 5 minutes"
