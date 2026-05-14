@@ -1,17 +1,17 @@
 ---
-- name: Ensure staging namespace and ConfigMap exist
+- name: Configure staging environment
   hosts: localhost
   connection: local
 
   tasks:
-    - name: Create namespace if missing
+    - name: Create staging namespace if missing
       kubernetes.core.k8s:
         name: kijani-staging
         api_version: v1
         kind: Namespace
         state: present
 
-    - name: Apply the staging ConfigMap
+    - name: Apply staging ConfigMap
       kubernetes.core.k8s:
         namespace: kijani-staging
         definition:

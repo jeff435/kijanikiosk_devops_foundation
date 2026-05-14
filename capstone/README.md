@@ -1,21 +1,18 @@
-# KijaniKiosk Capstone – Track A
+# KijaniKiosk Capstone - Track A
 
 ## What this project does
-Adds a staging environment, pipeline with approval gate, and Prometheus alerts to KijaniKiosk.
+Adds staging environment, pipeline with approval gate, and Prometheus alerts.
 
 ## Directory structure
-- `docs/` – scope, architecture, governance log, peer log, reflection
-- `terraform/` – staging namespace
-- `ansible/` – staging ConfigMap
-- `pipeline/` – Jenkinsfile
-- `observability/` – Prometheus alert rule
+- `terraform/` - staging namespace
+- `ansible/` - staging ConfigMap
+- `pipeline/` - Jenkinsfile with approval gate
+- `observability/` - Prometheus alert rules
+- `k8s/` - Kubernetes manifests
+- `docs/` - documentation
 
-## How to run
-1. `cd capstone/terraform && terraform apply`
-2. `ansible-playbook capstone/ansible/configure-staging.yml`
-3. Jenkins pipeline triggers on merge to main
-
-## Known issues
-- Smoke test only checks /health (should also check version)
-- Terraform state is local (should be remote S3)
-- Ansible is overkill here
+## Quick start
+```bash
+cd capstone/terraform && terraform init && terraform apply -auto-approve
+ansible-playbook capstone/ansible/configure-staging.yml
+kubectl apply -f capstone/k8s/ -n kijani-staging

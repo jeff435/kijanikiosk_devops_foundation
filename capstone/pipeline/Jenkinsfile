@@ -19,16 +19,15 @@ pipeline {
         }
         stage('Deploy to Staging') {
             steps {
-                sh 'kubectl apply -f capstone/k8s/kk-payments-deployment.yaml -n kijani-staging'
-                sh 'kubectl apply -f capstone/k8s/kk-payments-service.yaml -n kijani-staging'
+                sh 'kubectl apply -f capstone/k8s/ -n kijani-staging'
             }
         }
         stage('Smoke Test') {
             steps {
                 script {
                     sh 'sleep 10'
-                    def health = sh(script: 'kubectl exec -n kijani-staging deployment/kk-payments -- curl -s http://localhost:3000/health', returnStdout: true).trim()
-                    if (!health.contains('"status":"ok"')) {
+                    def health = sh(script: 'kubectl exec -n kijani-staging deployment/kk-payments -- curl -s http://localhost:3000/health 2>/dev/null || echo "unhealthy"', returnStdout: true).trim()
+                    if (health != "healthy") {
                         error "Smoke test failed"
                     }
                     echo "Smoke test passed"
@@ -40,14 +39,13 @@ pipeline {
                 message "Deploy to production?"
                 submitter "admin"
                 parameters {
-                    string(name: 'REASON', defaultValue: '', description: 'Why approve?')
+                    string(name: 'REASON', defaultValue: '', description: 'Why approve this deployment?')
                 }
             }
         }
         stage('Deploy to Production') {
             steps {
-                sh 'kubectl apply -f capstone/k8s/kk-payments-deployment.yaml -n default'
-                sh 'kubectl apply -f capstone/k8s/kk-payments-service.yaml -n default'
+                sh 'kubectl apply -f capstone/k8s/ -n default'
             }
         }
     }
